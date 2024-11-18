@@ -1,20 +1,55 @@
-// nBodyProblemOpenMp.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 
-int main()
+#include <iomanip>
+
+#include "Updaters.h"
+#include "Constants.h"
+#include "Simulation.h"
+
+
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello World!\n";
+
+	if (argc == 1) {
+		Simulation simulation;
+		simulation.randomGenerateBodies(1000);
+		simulation.drawSimulation(noDataRace, "result.gif");
+	}
+	else if (argc == 2) {
+		void (*update)(std::vector<Body>&);
+		if (strcmp(argv[1], "naive") == 0) {
+			update = singleThread;
+		}
+		else if (strcmp(argv[1], "noDataRace") == 0) {
+			update = noDataRace;
+		}
+		else {
+			std::cout << "\nERROR: There is no such method (try: singleThread, noDataRace)";
+			return -1;
+		}
+
+		int max_threads = omp_get_max_threads();
+
+		std::cout << "num threads:";
+		for (int i = 1; i <= max_threads; i++) {
+			std::cout << std::setw(8) << i;
+		}
+		std::cout << "\nTIME:" << std::setw(9) << ' ';
+		double t = 0;
+		for (int i = 1; i <= max_threads; i++) {
+			omp_set_num_threads(i);
+			for (int j = 0; j < 10; j++) {
+				Simulation simulation;
+				simulation.randomGenerateBodies(1000);
+				t += simulation.simulate(update);
+			}
+			t /= 10;
+			std::cout << std::setw(8) << std::setprecision(3) << t;
+		}
+
+	}
+	else {
+		std::cout << "\n\nERROR: TOO MANY PARAMETERS";
+		return -1;
+	}
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
