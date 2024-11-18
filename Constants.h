@@ -5,7 +5,7 @@ constexpr double TO_METERS = 1.496e11; // Meters in an AU(Astronomical Unit)
 
 constexpr double SYSTEM_SIZE = 3.5; // Farthest particles in AU
 constexpr double INNER_BOUND = 0.3; // Closest bodies to center in AU
-constexpr double SOFTENING = (0.015 * TO_METERS);
+constexpr double SOFTENING = (0.005 * TO_METERS);
 
 constexpr int width = 256; //width of gif
 constexpr int height = 256; //height of gif

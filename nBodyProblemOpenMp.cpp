@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
 	if (argc == 1) {
 		Simulation simulation;
-		simulation.randomGenerateBodies(1000);
+		simulation.randomGenerateBodies(2000);
 		simulation.drawSimulation(noDataRace, "result.gif");
 	}
 	else if (argc == 2) {

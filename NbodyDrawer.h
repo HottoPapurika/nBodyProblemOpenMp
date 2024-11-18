@@ -34,12 +34,15 @@ public:
 
 	void update() {
 		cls();
-		for (auto& body : bodies) {
-			std::pair<int, int> xy = positionToPicture(body.position);
+		for (int i = 0; i < bodies.size(); i++) {
+			std::pair<int, int> xy = positionToPicture(bodies[i].position);
 			xy.first += width / 2;
 			xy.second += height / 2;
 			if (xy.first > 255 || xy.first < 0 || xy.second>255 || xy.second < 0) continue;
-			SetPixel(xy.first, xy.second, 0, 0, 255);
+			if(i!=0)SetPixel(xy.first, xy.second, 0, 0, 255);
+			else {
+				SetPixel(xy.first, xy.second, 255, 0, 0);
+			}
 		}
 		GifWriteFrame(&writer, image, width, height, 2, 8, true);
 	}

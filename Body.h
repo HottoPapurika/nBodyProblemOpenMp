@@ -13,7 +13,7 @@ public:
 	Vector2 forces;   //	kg*m/s
 	Vector2 position; //	AU
 
-	void moveBody(double dt) {
+	void move(double dt) {
 		Vector2 dv = (forces / mass) * dt;;
 		velocity += dv;
 		position += (velocity + dv / 2) / TO_METERS * dt; //from AU to m
