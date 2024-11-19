@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <iomanip>
+#include <fstream>
 
 #include "Updaters.h"
 #include "Constants.h"
@@ -9,7 +10,7 @@
 #include "cmdparser.h"
 
 template<typename T>
-void test(T& update, int minThreads, int maxThreads, int numBodies, int numFrames) {
+void test(T& update, int minThreads, int maxThreads, int numBodies, int numFrames, std::string outputFileName) {
 	std::cout << "num threads:";
 	for (int i = minThreads; i <= maxThreads; i++) {
 		std::cout << std::setw(8) << i;
@@ -24,6 +25,11 @@ void test(T& update, int minThreads, int maxThreads, int numBodies, int numFrame
 			t += simulation.simulate(update, numFrames);
 		}
 		t /= 10;
+		std::ofstream out(outputFileName, std::ios::app);
+		if (out.is_open()) {
+			out << ' ' << std::setprecision(3) << t;
+		}
+		out.close();
 		std::cout << std::setw(8) << std::setprecision(3) << t;
 	}
 }
@@ -37,18 +43,48 @@ void drawGif(T& update, int numThreads, int numBodies, int numFrames, std::strin
 	simulation.drawSimulation(update, numFrames, outputFileName);
 }
 
-void testAll(int minNumThreads, int maxNumThreads, int numBodies, int numFrames) {
+void testAll(int minNumThreads, int maxNumThreads, int numBodies, int numFrames, std::string outputFileName) {
 	TriangleLocalForces triangleLocalForces;
 	OptimizedTriangleLocalForces optimizedTriangleLocalForces;
 
+	std::ofstream out(outputFileName, std::ios::app);
+	if (out.is_open()) {
+		out << "Threads:";
+		for (int i = minNumThreads; i <= maxNumThreads; i++) {
+			out << ' ' << i;
+		}
+	}
+	out.close();
+
+	std::cout << "\nsingleThread:\n";
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open()) { out << "\nsingleThread:"; }
+	out.close();
+	test(singleThread, 1, 1, numBodies, numFrames, outputFileName);
+
 	std::cout << "\ntriangleLocalForces:\n";
-	test(triangleLocalForces, minNumThreads, maxNumThreads, numBodies, numFrames);
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open()) { out << "\ntriangleLocalForces:"; }
+	out.close();
+	test(triangleLocalForces, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
+
 	std::cout << "\noptimizedTriangleLocalForces:\n";
-	test(optimizedTriangleLocalForces, minNumThreads, maxNumThreads, numBodies, numFrames);
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open()) { out << "\noptimizedTriangleLocalForces:"; }
+	out.close();
+	test(optimizedTriangleLocalForces, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
+
 	std::cout << "\nsquareNoDataRace:\n";
-	test(squareNoDataRace, minNumThreads, maxNumThreads, numBodies, numFrames);
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open()) { out << "\nsquareNoDataRace:"; }
+	out.close();
+	test(squareNoDataRace, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
+
 	std::cout << "\ntriangleAtomic:\n";
-	test(triangleAtomic, minNumThreads, maxNumThreads, numBodies, numFrames);
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open()) { out << "\ntriangleAtomic:"; }
+	out.close();
+	test(triangleAtomic, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 }
 
 void configure_parser(cli::Parser& parser) {
@@ -101,19 +137,19 @@ int main(int argc, char* argv[])
 	int numBodies = parser.get<int>("nb");
 
 	if (method == "singleThread") {
-		if (isTimeTest) test(singleThread, minNumThreads, maxNumThreads, numBodies, numFrames);
+		if (isTimeTest) test(singleThread, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		if (isGifDraw) {
 			drawGif(singleThread, numThreads, numBodies, numFrames, outputFileName);
 		}
 	}
 	else if (method == "squareNoDataRace") {
-		if (isTimeTest) test(squareNoDataRace, minNumThreads, maxNumThreads, numBodies, numFrames);
+		if (isTimeTest) test(squareNoDataRace, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		if (isGifDraw) {
 			drawGif(squareNoDataRace, numThreads, numBodies, numFrames, outputFileName);
 		}
 	}
 	else if (method == "triangleAtomic") {
-		if (isTimeTest) test(triangleAtomic, minNumThreads, maxNumThreads, numBodies, numFrames);
+		if (isTimeTest) test(triangleAtomic, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		if (isGifDraw) {
 			drawGif(triangleAtomic, numThreads, numBodies, numFrames, outputFileName);
 		}
@@ -121,7 +157,7 @@ int main(int argc, char* argv[])
 	else if (method == "triangleLocalForces") {
 		TriangleLocalForces tlf;
 		if (isTimeTest) {
-			test(tlf, minNumThreads, maxNumThreads, numBodies, numFrames);
+			test(tlf, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		}
 		if (isGifDraw) {
 			drawGif(tlf, numThreads, numBodies, numFrames, outputFileName);
@@ -130,7 +166,7 @@ int main(int argc, char* argv[])
 	else if (method == "optimizedTriangleLocalForces") {
 		OptimizedTriangleLocalForces otlf;
 		if (isTimeTest) {
-			test(otlf, minNumThreads, maxNumThreads, numBodies, numFrames);
+			test(otlf, minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		}
 		if (isGifDraw) {
 			drawGif(otlf, numThreads, numBodies, numFrames, outputFileName);
@@ -141,7 +177,7 @@ int main(int argc, char* argv[])
 			std::cout << "The method rendering function is not available for the all parameter";
 			return -1;
 		}
-		if (isTimeTest) testAll(minNumThreads, maxNumThreads, numBodies, numFrames);
+		if (isTimeTest) testAll(minNumThreads, maxNumThreads, numBodies, numFrames, outputFileName);
 		return 0;
 	}
 	else {
