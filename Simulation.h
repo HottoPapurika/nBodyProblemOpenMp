@@ -18,11 +18,11 @@ public:
 	}
 
 	template<typename F>
-	double simulate(F& update) {
+	double simulate(F& update, int numFrames) {
 
 		auto start = std::chrono::system_clock::now();
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < numFrames; i++) {
 			update(bodies);
 		}
 		auto finish = std::chrono::system_clock::now();
@@ -30,10 +30,10 @@ public:
 	}
 
 	template<typename F>
-	void drawSimulation(F& update, std::string outputFile) {
+	void drawSimulation(F& update, int numFrames, std::string outputFile) {
 
 		NbodyDrawer drawer(bodies, outputFile);
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < numFrames; i++) {
 			update(bodies);
 			drawer.update();
 		}

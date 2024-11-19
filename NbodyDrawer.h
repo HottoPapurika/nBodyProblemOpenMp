@@ -1,5 +1,4 @@
 #pragma once
-#include <omp.h>
 #include <cmath>
 #include <cstdint>
 #include <vector>

@@ -41,5 +41,8 @@
     <ClInclude Include="Updaters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cmdparser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

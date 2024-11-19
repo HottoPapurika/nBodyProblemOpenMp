@@ -26,33 +26,6 @@ void singleThread(std::vector<Body>& bodies) {
 	}
 }
 
-void triangleCritical(std::vector<Body>& bodies) {
-
-#pragma omp parallel for
-	for (int i = 0; i < bodies.size(); i++) {
-		bodies[i].forces = Vector2{ 0,0 };
-	}
-
-#pragma omp parallel for schedule(dynamic, 6)
-	for (int i = 0; i < bodies.size(); i++) {
-		for (int j = i + 1; j < bodies.size(); j++) {
-			double forceMagnitude = Body::getForceMagnitudeBetweenTwoBodies(bodies[i], bodies[j]);
-			Vector2 dir = (bodies[j].position - bodies[i].position) * TO_METERS;
-
-#pragma omp critical
-			{
-				bodies[i].forces += forceMagnitude * dir;
-				bodies[j].forces -= forceMagnitude * dir;
-			}
-		}
-	}
-
-#pragma omp parallel for
-	for (int i = 0; i < bodies.size(); i++) {
-		bodies[i].move(TIME_STEP);
-	}
-}
-
 void triangleAtomic(std::vector<Body>& bodies) {
 
 #pragma omp parallel for
