@@ -52,7 +52,7 @@ void testAll(int minNumThreads, int maxNumThreads, int numBodies, int numFrames)
 }
 
 void configure_parser(cli::Parser& parser) {
-	parser.set_optional<std::string>("m", "method", "triangleLocalForces", "The name of the simulation update method. (singleThread, squareNoDataRace, triangleAtomic, triangleLocalForces, optimizedTriangleLocalForces, all))");
+	parser.set_optional<std::string>("m", "method", "triangleLocalForces", "The name of the simulation update method. (singleThread, squareNoDataRace, triangleAtomic, triangleLocalForces, optimizedTriangleLocalForces, all)");
 	parser.set_optional<bool>("g", "gif", false, "Make gif.");
 	parser.set_optional<bool>("t", "test", false, "Starts time testing of the selected method.");
 	parser.set_optional<int>("n", "numThreads", 12, "The number of threads used in the simulation. (default: 12)");
